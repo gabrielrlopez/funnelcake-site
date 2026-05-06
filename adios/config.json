@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "enabled": true,
+  "skip_texts": [
+    "Skip ad",
+    "Skip ads",
+    "Skip Ad",
+    "Skip Ads",
+    "SKIP AD",
+    "Skip",
+    "Omitir anuncio",
+    "Omitir anuncios",
+    "Pular anúncio",
+    "Überspringen",
+    "Ignorer l'annonce",
+    "Пропустить"
+  ],
+  "skip_descriptions": [
+    "Skip ad",
+    "Skip ads",
+    "Skip this ad"
+  ],
+  "skip_view_ids": [
+    "skip_ad_button",
+    "skip_button",
+    "ad_skip_button"
+  ],
+  "target_packages": [
+    "com.google.android.youtube",
+    "com.google.android.apps.youtube.music"
+  ],
+  "throttle_ms": 500,
+  "cooldown_ms": 1000,
+  "parent_walk_depth": 3
+}
