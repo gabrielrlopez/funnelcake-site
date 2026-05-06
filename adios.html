@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adios — Say Adios to YouTube ads.</title>
+  <meta name="description" content="Auto-skip every skippable ad on YouTube & YouTube Music. Hands-free. One-time purchase.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0F0F0F;
+      --surface: #161616;
+      --border:  rgba(255, 255, 255, 0.08);
+      --text:    rgba(255, 255, 255, 0.82);
+      --muted:   rgba(255, 255, 255, 0.42);
+      --red:     #FF0000;
+      --pink:    #EC4899;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ─────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 15, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: rgba(255, 255, 255, 0.85); }
+    .nav-back .pink { color: var(--pink); }
+
+    .nav-logo-adios {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+    .nav-logo-adios .adi { color: #fff; }
+    .nav-logo-adios .os  { color: var(--red); }
+
+    .nav-links-adios {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+    .nav-links-adios a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links-adios a:hover { color: rgba(255, 255, 255, 0.85); }
+
+    .nav-center { display: flex; align-items: center; gap: 3rem; }
+
+    /* ── HERO ────────────────────────────── */
+    #hero {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(255, 0, 0, 0.07) 0%, transparent 68%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .adios-hero-logo {
+      font-size: clamp(5.5rem, 18vw, 11rem);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .adios-hero-logo .adi { color: #ffffff; }
+    .adios-hero-logo .os  { color: var(--red); }
+
+    .hero-tagline {
+      font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.8;
+      margin-bottom: 2.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-red {
+      display: inline-block;
+      background: #FF0000;
+      color: #fff;
+      padding: 0.95rem 2.1rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 22px rgba(255, 0, 0, 0.32);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-red:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 36px rgba(255, 0, 0, 0.42);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      padding: 0.95rem 2.1rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ── SECTION COMMON ──────────────────── */
+    .section { padding: 6rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-heading {
+      font-size: clamp(1.85rem, 4vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 3rem;
+    }
+
+    /* ── HOW IT WORKS ────────────────────── */
+    #how-it-works { background: var(--surface); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.25rem 2rem;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 800;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+    }
+
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.55rem;
+    }
+
+    .step-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── FEATURES ────────────────────────── */
+    #features { background: var(--bg); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .feature-item:hover {
+      border-color: rgba(255, 0, 0, 0.3);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+    }
+
+    .feature-check {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 0, 0, 0.14);
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #FF4444;
+      margin-top: 1px;
+    }
+
+    .feature-text {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ── PRICING ─────────────────────────── */
+    #pricing { background: var(--surface); }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 680px;
+    }
+
+    .pricing-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.4rem 2rem;
+      background: rgba(255, 255, 255, 0.035);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card.featured {
+      border-color: rgba(255, 0, 0, 0.5);
+      background: rgba(255, 0, 0, 0.05);
+    }
+
+    .pricing-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--red);
+      color: #fff;
+      padding: 0.32rem 0.8rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      align-self: flex-start;
+    }
+
+    .pricing-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-price {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 0.55rem;
+    }
+    .pricing-price .unit {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0;
+    }
+
+    .pricing-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 2rem;
+      flex: 1;
+    }
+
+    /* ── FOOTER ──────────────────────────── */
+    footer {
+      background: #000000;
+      color: rgba(255, 255, 255, 0.38);
+      padding: 2.5rem 2.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+    .footer-copy { font-size: 0.875rem; }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.38);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: rgba(255, 255, 255, 0.8); }
+    .footer-socials { display: flex; gap: 1.25rem; list-style: none; }
+    .footer-socials a {
+      color: rgba(255, 255, 255, 0.38);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: rgba(255, 255, 255, 0.8); }
+
+    /* ── APK TOOLTIP ────────────────────── */
+    .btn-apk { position: relative; }
+    .btn-apk::after {
+      content: 'Coming soon';
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn-apk:hover::after { opacity: 1; }
+
+    /* ── SCROLL REVEAL ───────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+
+    /* Hero elements animate in on load */
+    .hero-item {
+      opacity: 0;
+      transform: translateY(22px);
+      animation: heroIn 0.75s ease forwards;
+    }
+    .hero-item:nth-child(1) { animation-delay: 0.1s; }
+    .hero-item:nth-child(2) { animation-delay: 0.28s; }
+    .hero-item:nth-child(3) { animation-delay: 0.44s; }
+    .hero-item:nth-child(4) { animation-delay: 0.58s; }
+
+    @keyframes heroIn {
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ── RESPONSIVE ──────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links-adios { display: none; }
+      .nav-center { gap: 1.5rem; }
+      .hero-btns  { flex-direction: column; align-items: center; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 480px) {
+      .nav     { padding: 0 1.25rem; }
+      .section { padding: 4rem 1.25rem; }
+      #hero    { padding: 3rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-back">
+      ← Funnel Cake <span class="pink">Digital</span>
+    </a>
+    <div class="nav-center">
+      <span class="nav-logo-adios">
+        <span class="adi">ADI</span><span class="os">OS</span>
+      </span>
+      <ul class="nav-links-adios">
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <div class="adios-hero-logo hero-item">
+      <span class="adi">ADI</span><span class="os">OS</span>
+    </div>
+    <h1 class="hero-tagline hero-item">Say Adios to YouTube ads.</h1>
+    <p class="hero-sub hero-item">
+      Auto-skip every skippable ad. YouTube &amp; YouTube Music.<br>
+      Hands-free. One-time purchase.
+    </p>
+    <div class="hero-btns hero-item">
+      <a href="https://play.google.com/store/apps/details?id=com.funnelcakedigital.adios" class="btn-red">Download on Google Play</a>
+      <a href="#apk-coming-soon" class="btn-ghost btn-apk">Download APK</a>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="section">
+    <div class="section-inner">
+      <p class="section-label reveal">Simple setup</p>
+      <h2 class="section-heading reveal reveal-d1">How it works</h2>
+      <div class="steps-grid">
+        <div class="step-card reveal reveal-d1">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Enable Adios</h3>
+          <p class="step-desc">One-time setup, takes 30 seconds.</p>
+        </div>
+        <div class="step-card reveal reveal-d2">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Get busy</h3>
+          <p class="step-desc">Work out. Cook. Shower. Drive. Adios runs in the background.</p>
+        </div>
+        <div class="step-card reveal reveal-d3">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Ads get handled</h3>
+          <p class="step-desc">Skipped for you — no effort, no interruptions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="section">
+    <div class="section-inner">
+      <p class="section-label reveal">What you get</p>
+      <h2 class="section-heading reveal reveal-d1">Features</h2>
+      <div class="features-grid">
+        <div class="feature-item reveal reveal-d1">
+          <span class="feature-check">✓</span>
+          <span class="feature-text">Works on YouTube &amp; YouTube Music</span>
+        </div>
+        <div class="feature-item reveal reveal-d2">
+          <span class="feature-check">✓</span>
+          <span class="feature-text">Works on any Android phone</span>
+        </div>
+        <div class="feature-item reveal reveal-d1">
+          <span class="feature-check">✓</span>
+          <span class="feature-text">Safe and legit — uses built-in Android features</span>
+        </div>
+        <div class="feature-item reveal reveal-d2">
+          <span class="feature-check">✓</span>
+          <span class="feature-text">Zero data collected — runs entirely on-device</span>
+        </div>
+        <div class="feature-item reveal reveal-d3">
+          <span class="feature-check">✓</span>
+          <span class="feature-text">One-time purchase, no subscription</span>
+        </div>
+        <div class="feature-item reveal reveal-d1">
+          <span class="feature-check">✓</span>
+          <span class="feature-text">Runs silently in the background</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="section">
+    <div class="section-inner">
+      <p class="section-label reveal">Simple pricing</p>
+      <h2 class="section-heading reveal reveal-d1">Try it. Love it. Keep it.</h2>
+      <div class="pricing-grid">
+
+        <div class="pricing-card reveal reveal-d1">
+          <h3 class="pricing-title">Free Trial</h3>
+          <div class="pricing-price">Free <span class="unit">/ 30 skips</span></div>
+          <p class="pricing-desc">30 skips on us. No payment info needed. See how it feels to never tap "Skip Ad" again.</p>
+          <a href="https://play.google.com/store/apps/details?id=com.funnelcakedigital.adios" class="btn-ghost">Download &amp; try</a>
+        </div>
+
+        <div class="pricing-card featured reveal reveal-d2">
+          <div class="pricing-tag">Most popular</div>
+          <h3 class="pricing-title">Unlimited</h3>
+          <div class="pricing-price">$3.99 <span class="unit">/ once</span></div>
+          <p class="pricing-desc">Unlimited skips. Forever. No subscription, no recurring charges. Pay once, done.</p>
+          <a href="https://play.google.com/store/apps/details?id=com.funnelcakedigital.adios" class="btn-red">Unlock unlimited</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-copy">© 2026 Funnel Cake Digital</p>
+      <ul class="footer-links">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+      </ul>
+      <ul class="footer-socials">
+        <li><a href="#">Twitter</a></li>
+        <li><a href="#">TikTok</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

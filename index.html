@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funnel Cake Digital — We build apps people actually want.</title>
+  <meta name="description" content="Funnel Cake Digital is a small studio making useful, beautiful, slightly rebellious software.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink: #EC4899;
+      --dark: #1A1A1A;
+      --text: #555555;
+      --bg: #FAFAFA;
+      --card-dark: #0F0F0F;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ─────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #ffffff;
+      box-shadow: 0 1px 16px rgba(0, 0, 0, 0.07);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+    }
+
+    .nav-logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      text-decoration: none;
+      color: var(--dark);
+      white-space: nowrap;
+    }
+    .nav-logo .pink { color: var(--pink); }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--pink); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--dark);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: #fff;
+      padding: 1.5rem 2.5rem 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      z-index: 99;
+      flex-direction: column;
+      gap: 0;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-size: 1.1rem;
+      font-weight: 500;
+      padding: 1rem 0;
+      border-bottom: 1px solid #F0F0F0;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--pink); }
+
+    /* ── HERO ────────────────────────────── */
+    #hero {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 2rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: #FCE7F3;
+      color: var(--pink);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-h1 {
+      font-size: clamp(2.75rem, 7.5vw, 5.25rem);
+      font-weight: 800;
+      line-height: 1.07;
+      letter-spacing: -0.04em;
+      color: var(--dark);
+      max-width: 880px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      color: var(--text);
+      max-width: 520px;
+      line-height: 1.8;
+      margin-bottom: 2.75rem;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--pink);
+      color: #fff;
+      padding: 1rem 2.4rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 22px rgba(236, 72, 153, 0.38);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 32px rgba(236, 72, 153, 0.48);
+    }
+
+    /* ── SECTION COMMON ──────────────────── */
+    .section { padding: 6rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-heading {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--dark);
+      margin-bottom: 3rem;
+    }
+
+    /* ── PRODUCTS ────────────────────────── */
+    #products { background: var(--bg); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card-dark {
+      background: var(--card-dark);
+      border-radius: 20px;
+      padding: 2.75rem 2.25rem;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .adios-logo-card {
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+    .adios-logo-card .adi { color: #ffffff; }
+    .adios-logo-card .os  { color: #FF0000; }
+
+    .product-tagline {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.65;
+      margin-bottom: 2rem;
+      flex: 1;
+    }
+
+    .product-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline-white {
+      display: inline-block;
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      color: #fff;
+      padding: 0.72rem 1.65rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-outline-white:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .tag-coming-soon {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.45);
+      padding: 0.32rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .product-card-placeholder {
+      border: 2px dashed #DDDDDD;
+      border-radius: 20px;
+      padding: 2.75rem 2.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+      text-align: center;
+      gap: 0.85rem;
+    }
+    .placeholder-icon { font-size: 2.25rem; opacity: 0.28; }
+    .placeholder-text {
+      color: #BBBBBB;
+      font-size: 1rem;
+      font-style: italic;
+    }
+
+    /* ── ABOUT ───────────────────────────── */
+    #about { background: #ffffff; }
+
+    .about-body {
+      font-size: 1.1rem;
+      color: var(--text);
+      max-width: 680px;
+      line-height: 1.9;
+    }
+
+    /* ── CONTACT ─────────────────────────── */
+    #contact { background: var(--bg); }
+
+    .contact-email-link {
+      display: inline-block;
+      color: var(--pink);
+      font-size: 1.05rem;
+      font-weight: 500;
+      text-decoration: none;
+      margin-bottom: 2.75rem;
+      transition: opacity 0.2s;
+    }
+    .contact-email-link:hover { opacity: 0.75; }
+
+    .contact-form {
+      max-width: 580px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    @media (min-width: 768px) {
+      #contact .section-inner { text-align: center; }
+      #contact .contact-email-link { display: block; }
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.1rem;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 0.92rem 1.15rem;
+      border: 1.5px solid #E2E2E2;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--dark);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: #CCCCCC; }
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+    }
+    .form-textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .btn-submit {
+      align-self: flex-start;
+      background: var(--pink);
+      color: #fff;
+      border: none;
+      padding: 1rem 2.4rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 4px 20px rgba(236, 72, 153, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(236, 72, 153, 0.42);
+    }
+
+    /* ── FOOTER ──────────────────────────── */
+    footer {
+      background: var(--dark);
+      color: rgba(255, 255, 255, 0.5);
+      padding: 2.5rem 2.5rem;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+
+    .footer-copy { font-size: 0.875rem; }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #fff; }
+
+    .footer-socials {
+      display: flex;
+      gap: 1.25rem;
+      list-style: none;
+    }
+    .footer-socials a {
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: #fff; }
+
+    /* ── SCROLL REVEAL ───────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+
+    /* ── RESPONSIVE ──────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links  { display: none; }
+      .hamburger  { display: flex; }
+      .form-row   { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 480px) {
+      .nav     { padding: 0 1.25rem; }
+      .section { padding: 4rem 1.25rem; }
+      #hero    { padding: 3rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="#" class="nav-logo">Funnel Cake <span class="pink">Digital</span></a>
+    <ul class="nav-links">
+      <li><a href="#products">Products</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#products" onclick="closeMobileMenu()">Products</a>
+    <a href="#about"    onclick="closeMobileMenu()">About</a>
+    <a href="#contact"  onclick="closeMobileMenu()">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <span class="hero-badge">✦ Handcrafted apps. AI-infused.</span>
+    <h1 class="hero-h1">We build apps people<br>actually want.</h1>
+    <p class="hero-sub">Funnel Cake Digital is a small studio making useful, beautiful, slightly rebellious software.</p>
+    <a href="#products" class="btn-primary">See our work</a>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="section">
+    <div class="section-inner">
+      <p class="section-label reveal">What we ship</p>
+      <h2 class="section-heading reveal reveal-d1">Products</h2>
+      <div class="products-grid">
+
+        <!-- Adios -->
+        <div class="product-card-dark reveal reveal-d2">
+          <div class="adios-logo-card">
+            <span class="adi">ADI</span><span class="os">OS</span>
+          </div>
+          <p class="product-tagline">Auto-skip YouTube ads. Hands-free. Forever.</p>
+          <div class="product-actions">
+            <a href="adios.html" class="btn-outline-white">Learn more</a>
+            <span class="tag-coming-soon">📲 Play Store — Coming Soon</span>
+          </div>
+        </div>
+
+        <!-- Placeholder -->
+        <div class="product-card-placeholder reveal reveal-d3">
+          <span class="placeholder-icon">🧁</span>
+          <p class="placeholder-text">Something new is cooking...</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <div class="section-inner">
+      <p class="section-label reveal">The studio</p>
+      <h2 class="section-heading reveal reveal-d1">About</h2>
+      <p class="about-body reveal reveal-d2">
+        Funnel Cake Digital builds software that solves real problems. We started with a simple idea — what if your phone could skip YouTube ads for you? That became Adios, our first product. We're a small team that moves fast, ships often, and doesn't ask for permission.
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <div class="section-inner">
+      <p class="section-label reveal">Let's talk</p>
+      <h2 class="section-heading reveal reveal-d1">Get in touch</h2>
+      <a href="mailto:support@funnelcakedigital.com" class="contact-email-link reveal reveal-d2">
+        support@funnelcakedigital.com
+      </a>
+      <form class="contact-form reveal reveal-d2" id="contact-form" novalidate>
+        <div class="form-row">
+          <input type="text"  class="form-input"  name="name"    placeholder="Your name"  required>
+          <input type="email" class="form-input"  name="email"   placeholder="Your email" required>
+        </div>
+        <textarea class="form-textarea" name="message" placeholder="What's on your mind?" required></textarea>
+        <button type="submit" class="btn-submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-copy">© 2026 Funnel Cake Digital</p>
+      <ul class="footer-links">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+      </ul>
+      <ul class="footer-socials">
+        <li><a href="#">Twitter</a></li>
+        <li><a href="#">TikTok</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    // Hamburger
+    const hamburgerBtn  = document.getElementById('hamburger-btn');
+    const mobileMenu    = document.getElementById('mobile-menu');
+
+    hamburgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('open');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+      }
+    });
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    // Contact form → mailto
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name    = e.target.name.value.trim();
+      const email   = e.target.email.value.trim();
+      const message = e.target.message.value.trim();
+      const subject = encodeURIComponent(`Message from ${name}`);
+      const body    = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
+      window.location.href = `mailto:support@funnelcakedigital.com?subject=${subject}&body=${body}`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Adios</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0F0F0F;
+      --surface: #161616;
+      --border:  rgba(255, 255, 255, 0.08);
+      --text:    rgba(255, 255, 255, 0.82);
+      --muted:   rgba(255, 255, 255, 0.42);
+      --red:     #FF0000;
+      --pink:    #EC4899;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ─────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 15, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: rgba(255, 255, 255, 0.85); }
+    .nav-back .pink { color: var(--pink); }
+
+    .nav-logo-adios {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .nav-logo-adios .adi { color: #fff; }
+    .nav-logo-adios .os  { color: var(--red); }
+
+    /* ── CONTENT ─────────────────────────── */
+    .content {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 5rem 2rem 6rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 3.5rem;
+    }
+
+    .policy-item {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.8;
+      padding: 1.5rem 1.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .policy-item a {
+      color: var(--red);
+      text-decoration: none;
+    }
+    .policy-item a:hover { opacity: 0.75; }
+
+    /* ── FOOTER ──────────────────────────── */
+    footer {
+      background: #000000;
+      color: rgba(255, 255, 255, 0.38);
+      padding: 2.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+    .footer-copy { font-size: 0.875rem; }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.38);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: rgba(255, 255, 255, 0.8); }
+    .footer-socials { display: flex; gap: 1.25rem; list-style: none; }
+    .footer-socials a {
+      color: rgba(255, 255, 255, 0.38);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: rgba(255, 255, 255, 0.8); }
+
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 480px) {
+      .nav { padding: 0 1.25rem; }
+      .content { padding: 3rem 1.25rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-back">
+      ← Funnel Cake <span class="pink">Digital</span>
+    </a>
+    <a href="adios.html" class="nav-logo-adios">
+      <span class="adi">ADI</span><span class="os">OS</span>
+    </a>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+    <h1 class="page-title">Privacy Policy</h1>
+    <p class="page-subtitle">Last updated: May 2026</p>
+
+    <div class="policy-item">Adios does not collect, store, or transmit any personal data.</div>
+    <div class="policy-item">The app runs entirely on your device. All processing happens locally.</div>
+    <div class="policy-item">No analytics. No tracking. No network requests. No accounts.</div>
+    <div class="policy-item">The only data stored is your skip count and app preferences, saved locally on your device using SharedPreferences.</div>
+    <div class="policy-item">We do not have access to your YouTube account, your viewing history, or any personal information.</div>
+    <div class="policy-item">The accessibility service is used solely to detect and tap the Skip Ad button. It does not read, store, or transmit any screen content.</div>
+    <div class="policy-item">If you have questions about our privacy practices, contact us at <a href="mailto:support@funnelcakedigital.com">support@funnelcakedigital.com</a></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-copy">© 2026 Funnel Cake Digital</p>
+      <ul class="footer-links">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+      </ul>
+      <ul class="footer-socials">
+        <li><a href="#">Twitter</a></li>
+        <li><a href="#">TikTok</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>
