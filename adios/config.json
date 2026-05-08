@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "enabled": true,
   "skip_texts": [
     "Skip ad",
@@ -30,6 +30,28 @@
     "com.google.android.apps.youtube.music"
   ],
   "throttle_ms": 500,
-  "cooldown_ms": 1000,
-  "parent_walk_depth": 3
+  "cooldown_ms": 500,
+  "parent_walk_depth": 3,
+  "popup_indicators": [
+    "Get Premium",
+    "Try Premium",
+    "Switch to Premium",
+    "YouTube Premium",
+    "Go Ad-Free",
+    "Start your free trial",
+    "1 month free"
+  ],
+  "dismiss_texts": [
+    "No thanks",
+    "No, thanks",
+    "Not now",
+    "Keep ads",
+    "Dismiss",
+    "Skip trial",
+    "Maybe later",
+    "Close",
+    "NO THANKS",
+    "KEEP ADS",
+    "NOT NOW"
+  ]
 }
